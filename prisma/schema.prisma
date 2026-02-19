@@ -1,0 +1,80 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../node_modules/.prisma/client"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum UserRole {
+  MEMBER
+  ADMIN
+}
+
+enum TaskStatus {
+  ACTIVE
+  COMPLETED
+}
+
+model User {
+  id        String   @id @default(uuid())
+  name      String
+  email     String   @unique
+  role      UserRole @default(MEMBER)
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  // Relación muchos a muchos con Tareas
+  assignments TaskAssignment[]
+
+  @@map("users")
+  @@index([email])
+  @@index([role])
+}
+
+model Task {
+  id             String     @id @default(uuid())
+  title          String
+  description    String?
+  estimatedHours Float      @map("estimated_hours")
+  dueDate        DateTime   @map("due_date")
+  status         TaskStatus @default(ACTIVE)
+  cost           Float      @default(0)
+  createdAt      DateTime   @default(now()) @map("created_at")
+  updatedAt      DateTime   @updatedAt @map("updated_at")
+
+  // Relación muchos a muchos con Usuarios
+  assignments TaskAssignment[]
+
+  @@map("tasks")
+  @@index([status])
+  @@index([dueDate])
+  @@index([createdAt])
+
+}
+
+// Tabla intermedia para la relación muchos a muchos entre User y Task
+model TaskAssignment {
+  id     String @id @default(uuid())
+  userId String @map("user_id")
+  taskId String @map("task_id")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  task Task @relation(fields: [taskId], references: [id], onDelete: Cascade)
+
+  hoursWorked Float @default(0) @map("hours_worked")
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@unique([userId, taskId])
+  @@map("task_assignments")
+  @@index([userId])
+  @@index([taskId])
+}
