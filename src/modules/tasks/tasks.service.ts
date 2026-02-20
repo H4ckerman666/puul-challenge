@@ -3,6 +3,7 @@ import { Prisma } from '@prisma/client';
 import { PrismaService } from '../../prisma/prisma.service';
 import { CreateTaskDto } from '../tasks/dto/create-task.dto';
 import { FilterTasksDto } from '../tasks/dto/filter-tasks.dto';
+import { UpdateTaskDto } from '../tasks/dto/update-task.dto';
 
 @Injectable()
 export class TasksService {
@@ -87,6 +88,42 @@ export class TasksService {
   remove(id: string) {
     return this.prisma.task.delete({
       where: { id },
+    });
+  }
+
+  async update(id: string, data: UpdateTaskDto) {
+    const { userIds, ...taskData } = data;
+
+    const updateData: Prisma.TaskUpdateInput = { ...taskData };
+
+    if (taskData.dueDate) {
+      updateData.dueDate = new Date(taskData.dueDate);
+    }
+
+    if (userIds !== undefined) {
+      await this.prisma.taskAssignment.deleteMany({
+        where: { taskId: id },
+      });
+
+      if (userIds.length > 0) {
+        updateData.assignments = {
+          create: userIds.map((userId) => ({
+            user: { connect: { id: userId } },
+          })),
+        };
+      }
+    }
+
+    return this.prisma.task.update({
+      where: { id },
+      data: updateData,
+      include: {
+        assignments: {
+          include: {
+            user: true,
+          },
+        },
+      },
     });
   }
 }
