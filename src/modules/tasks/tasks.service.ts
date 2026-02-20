@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { Prisma } from '@prisma/client';
 import { PrismaService } from '../../prisma/prisma.service';
 import { CreateTaskDto } from '../tasks/dto/create-task.dto';
 import { FilterTasksDto } from '../tasks/dto/filter-tasks.dto';
@@ -35,62 +36,51 @@ export class TasksService {
   }
 
   async findAll(filters: FilterTasksDto) {
-    const where: any = {};
+    const where: Prisma.TaskWhereInput = {};
 
-    // Filtro por título
     if (filters.title) {
       where.title = { contains: filters.title, mode: 'insensitive' };
     }
 
-    // Filtro por estado
     if (filters.status) {
       where.status = filters.status;
     }
 
-    // Filtro por fecha de vencimiento
     if (filters.dueDate) {
       where.dueDate = new Date(filters.dueDate);
     }
 
-    // Filtro por usuario asignado (ID)
-    if (filters.userId) {
-      where.assignments = {
-        some: { userId: filters.userId },
-      };
-    }
+    if (filters.userId || filters.userName || filters.userEmail) {
+      const assignmentWhere: Prisma.TaskAssignmentWhereInput = {};
 
-    // Filtro por nombre de usuario
-    if (filters.userName) {
-      where.assignments = {
-        some: {
-          user: {
+      if (filters.userId) {
+        assignmentWhere.userId = filters.userId;
+      }
+
+      if (filters.userName || filters.userEmail) {
+        assignmentWhere.user = {
+          ...(filters.userName && {
             name: { contains: filters.userName, mode: 'insensitive' },
-          },
-        },
-      };
-    }
-
-    // Filtro por email de usuario
-    if (filters.userEmail) {
-      where.assignments = {
-        some: {
-          user: {
+          }),
+          ...(filters.userEmail && {
             email: { contains: filters.userEmail, mode: 'insensitive' },
-          },
-        },
-      };
+          }),
+        };
+      }
+
+      where.assignments = { some: assignmentWhere };
     }
 
     return this.prisma.task.findMany({
       where,
       orderBy: { createdAt: 'desc' },
-      include: {
-        assignments: {
-          include: {
-            user: true,
-          },
-        },
-      },
+      // include: {
+      //   assignments: {
+      //     include: {
+      //       user: true,
+      //     },
+      //   },
+      // },
     });
   }
 }

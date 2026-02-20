@@ -1,4 +1,4 @@
-import { IsDateString, IsEnum, IsOptional, IsString } from 'class-validator';
+import { IsEnum, IsISO8601, IsOptional, IsString } from 'class-validator';
 import { TaskStatus } from '@prisma/client';
 
 export class FilterTasksDto {
@@ -11,7 +11,7 @@ export class FilterTasksDto {
   status?: TaskStatus;
 
   @IsOptional()
-  @IsDateString()
+  @IsISO8601()
   dueDate?: string;
 
   @IsOptional()
