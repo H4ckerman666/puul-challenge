@@ -83,4 +83,10 @@ export class TasksService {
       // },
     });
   }
+
+  remove(id: string) {
+    return this.prisma.task.delete({
+      where: { id },
+    });
+  }
 }
