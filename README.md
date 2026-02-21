@@ -105,7 +105,7 @@ User ←── TaskAssignment ──→ Task
 
    ```bash
    git clone https://github.com/H4ckerman666/puul-challenge.git
-   cd challenge
+   cd puul-challenge
    ```
 
 2. **Levantar la API y la base de datos con Docker Compose**
