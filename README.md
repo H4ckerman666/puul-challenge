@@ -27,12 +27,12 @@ El proyecto sigue la estructura modular de NestJS:
 
 ```text
 src/
-├── main.ts                 # Bootstrap: ValidationPipe global, puerto (default 3000)
-├── app.module.ts           # Módulo raíz: importa Users, Tasks, Analytics y Prisma
-├── app.controller.ts       # Health/hello (GET /)
+├── main.ts                 
+├── app.module.ts           
+├── app.controller.ts       
 ├── prisma/
-│   ├── prisma.module.ts    # Módulo global que exporta PrismaService
-│   └── prisma.service.ts   # Cliente Prisma (connect/disconnect en ciclo de vida)
+│   ├── prisma.module.ts    
+│   └── prisma.service.ts   
 └── modules/
     ├── users/              # Usuarios
     │   ├── users.module.ts
@@ -104,7 +104,7 @@ User ←── TaskAssignment ──→ Task
 1. **Clonar el repositorio**
 
    ```bash
-   git clone <url-del-repositorio>
+   git clone https://github.com/H4ckerman666/puul-challenge.git
    cd challenge
    ```
 
