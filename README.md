@@ -5,6 +5,7 @@
 API REST para la **gestión de tareas en equipos**, desarrollada como challenge técnico backend. Permite crear usuarios, asignar tareas a múltiples personas, gestionar estados, registrar horas trabajadas y consultar analíticas del sistema.
 
 **Principales capacidades:**
+
 - CRUD de usuarios con roles (`MEMBER`, `ADMIN`)
 - CRUD de tareas con asignación a varios usuarios
 - Filtros y ordenación en listados
@@ -12,14 +13,14 @@ API REST para la **gestión de tareas en equipos**, desarrollada como challenge 
 
 ## ⚙️ Tecnologías
 
-| Tecnología | Uso |
-|-----------|-----|
-| **Node.js** | Runtime JavaScript |
-| **NestJS** | Framework backend modular (módulos, controladores, servicios) |
-| **TypeScript** | Tipado estático |
-| **Prisma** | ORM para PostgreSQL (migraciones, tipos generados) |
-| **PostgreSQL** | Base de datos relacional |
-| **class-validator / class-transformer** | Validación y transformación de DTOs en los endpoints |
+| Tecnología                              | Uso                                                           |
+| --------------------------------------- | ------------------------------------------------------------- |
+| **Node.js**                             | Runtime JavaScript                                            |
+| **NestJS**                              | Framework backend modular (módulos, controladores, servicios) |
+| **TypeScript**                          | Tipado estático                                               |
+| **Prisma**                              | ORM para PostgreSQL (migraciones, tipos generados)            |
+| **PostgreSQL**                          | Base de datos relacional                                      |
+| **class-validator / class-transformer** | Validación y transformación de DTOs en los endpoints          |
 
 ## 🏗️ Arquitectura
 
@@ -27,12 +28,12 @@ El proyecto sigue la estructura modular de NestJS:
 
 ```text
 src/
-├── main.ts                 
-├── app.module.ts           
-├── app.controller.ts       
+├── main.ts
+├── app.module.ts
+├── app.controller.ts
 ├── prisma/
-│   ├── prisma.module.ts    
-│   └── prisma.service.ts   
+│   ├── prisma.module.ts
+│   └── prisma.service.ts
 └── modules/
     ├── users/              # Usuarios
     │   ├── users.module.ts
@@ -57,6 +58,7 @@ src/
 ## 🗄️ Modelo de Datos
 
 ### User
+
 - **id** (`String`, UUID)
 - **name** (`String`)
 - **email** (`String`, único)
@@ -65,6 +67,7 @@ src/
 - Relación muchos a muchos con `Task` a través de `TaskAssignment`.
 
 ### Task
+
 - **id** (`String`, UUID)
 - **title** (`String`)
 - **description** (`String?`)
@@ -76,6 +79,7 @@ src/
 - Relación muchos a muchos con `User` vía `TaskAssignment`.
 
 ### TaskAssignment
+
 - **id** (`String`, UUID)
 - **userId** (`String`)
 - **taskId** (`String`)
@@ -95,6 +99,7 @@ User ←── TaskAssignment ──→ Task
 ## 🚀 Instalación
 
 ### Requisitos
+
 - **Docker**
 - **Docker Compose**
 - (Opcional) **Node.js** (v18+ recomendado) y **npm** si quieres ejecutar la API fuera de Docker
@@ -123,11 +128,10 @@ User ←── TaskAssignment ──→ Task
 3. **Probar la API**
 
    La API quedará disponible en:
-
    - `http://localhost:3000`
+   - **Swagger UI**: `http://localhost:3000/api` (documentación interactiva)
 
    La base de datos PostgreSQL estará disponible en:
-
    - `localhost:5432` (usuario: `postgres`, contraseña: `postgres`, base de datos: `puul_db`)
 
 ### Opción 2: ejecución local sin Docker
@@ -169,30 +173,31 @@ User ←── TaskAssignment ──→ Task
    ```
 
    La API quedará disponible en `http://localhost:3000` (o el `PORT` definido).
+   - **Swagger UI**: `http://localhost:3000/api` (documentación interactiva)
 
 ## 📡 API – Resumen de endpoints
 
 ### Usuarios (`/users`)
 
-| Método | Ruta     | Descripción |
-|--------|----------|-------------|
-| POST   | `/users` | Crear usuario (`name`, `email`, `role` opcional) |
+| Método | Ruta     | Descripción                                                                                                                                                 |
+| ------ | -------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| POST   | `/users` | Crear usuario (`name`, `email`, `role` opcional)                                                                                                            |
 | GET    | `/users` | Listar usuarios; filtros por `name`, `email`, `role`. La respuesta incluye: número de tareas completadas y suma del coste de tareas completadas por usuario |
 
 ### Tareas (`/tasks`)
 
-| Método | Ruta        | Descripción |
-|--------|-------------|-------------|
-| POST   | `/tasks`    | Crear tarea (`title`, `estimatedHours`, `dueDate`, `userIds[]`, y opcionalmente `description`, `cost`) |
-| GET    | `/tasks`    | Listar tareas con filtros: `title`, `status`, `dueDate`, `userId`, `userName`, `userEmail`. Ordenadas por `createdAt` descendente |
-| PATCH  | `/tasks/:id`| Actualizar tarea (cualquiera de los campos y reasignación con `userIds`) |
-| DELETE | `/tasks/:id`| Eliminar tarea (y sus asignaciones relacionadas) |
+| Método | Ruta         | Descripción                                                                                                                       |
+| ------ | ------------ | --------------------------------------------------------------------------------------------------------------------------------- |
+| POST   | `/tasks`     | Crear tarea (`title`, `estimatedHours`, `dueDate`, `userIds[]`, y opcionalmente `description`, `cost`)                            |
+| GET    | `/tasks`     | Listar tareas con filtros: `title`, `status`, `dueDate`, `userId`, `userName`, `userEmail`. Ordenadas por `createdAt` descendente |
+| PATCH  | `/tasks/:id` | Actualizar tarea (cualquiera de los campos y reasignación con `userIds`)                                                          |
+| DELETE | `/tasks/:id` | Eliminar tarea (y sus asignaciones relacionadas)                                                                                  |
 
 ### Analítica (`/analytics`)
 
-| Método | Ruta        | Descripción |
-|--------|-------------|-------------|
-| GET    | `/analytics`| Métricas generales, top usuarios y variabilidad de trabajo por tarea |
+| Método | Ruta         | Descripción                                                          |
+| ------ | ------------ | -------------------------------------------------------------------- |
+| GET    | `/analytics` | Métricas generales, top usuarios y variabilidad de trabajo por tarea |
 
 Respuesta de ejemplo (estructura):
 
@@ -241,7 +246,7 @@ Respuesta de ejemplo (estructura):
   - Desviación estándar (`std_dev`)
   - Clasificación (`LOW_VARIANCE`, `MEDIUM_VARIANCE`, `HIGH_VARIANCE`)
   - Insight automático sobre el balance de carga.
-  
+
 ## 📄 Licencia
 
 UNLICENSED – Proyecto privado/challenge.
