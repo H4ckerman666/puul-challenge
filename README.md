@@ -11,6 +11,19 @@ API REST para la **gestión de tareas en equipos**, desarrollada como challenge 
 - Filtros y ordenación en listados
 - Métricas generales, top usuarios y análisis de distribución de trabajo por tarea
 
+## 🎥 Introducción a la API
+
+En este video explico:
+
+- Arquitectura del proyecto
+- Decisiones técnicas
+- Instalación del proyecto
+- Implementación de analítica
+
+👉 [Ver video](https://www.tella.tv/video/introduccion-a-la-api-de-gestion-de-tareas-de-usuarios-8x6e)
+
+Se recomienda ver el video para entender el enfoque del proyecto.
+
 ## ⚙️ Tecnologías
 
 | Tecnología                              | Uso                                                           |
